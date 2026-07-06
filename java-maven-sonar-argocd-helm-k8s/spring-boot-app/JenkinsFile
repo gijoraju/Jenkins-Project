@@ -50,7 +50,7 @@ stage('Build and Push Docker Image') {
     }
   }
 }
-  stage('Update Deployment File') {
+stage('Update Deployment File') {
     environment {
         GIT_REPO_NAME = "Jenkins-Project"
         GIT_USER_NAME = "gijoraju"
@@ -58,11 +58,7 @@ stage('Build and Push Docker Image') {
     steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             sh '''
-                pwd
-                ls -la
-                which git
-                git --version
-                git status
+                git config --global --add safe.directory /var/lib/jenkins/workspace/ultimate-demo
                 git config user.email "gijoraju@gmail.com"
                 git config user.name "Gijo Raju"
                 BUILD_NUMBER=${BUILD_NUMBER}
