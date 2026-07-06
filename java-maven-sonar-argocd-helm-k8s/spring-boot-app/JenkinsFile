@@ -51,26 +51,43 @@ stage('Build and Push Docker Image') {
   }
 }
 stage('Update Deployment File') {
-    environment {
-        GIT_REPO_NAME = "Jenkins-Project"
-        GIT_USER_NAME = "gijoraju"
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'github',
+            usernameVariable: 'GIT_USERNAME',
+            passwordVariable: 'GIT_PASSWORD'
+        )]) {
+
+            sh '''
+            set -e
+
+            git config --global --add safe.directory $(pwd)
+            git config user.email "gijoraju@gmail.com"
+            git config user.name "Gijo Raju"
+
+            DEPLOYMENT_FILE="java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml"
+
+            echo "Updating deployment file..."
+
+            sed -i -E "s|(image: rajugijo/ultimate-cicd:).*|\\1${BUILD_NUMBER}|" "$DEPLOYMENT_FILE"
+
+            echo "Updated file:"
+            cat "$DEPLOYMENT_FILE"
+
+            git add "$DEPLOYMENT_FILE"
+
+            if git diff --cached --quiet; then
+                echo "No changes detected."
+                exit 0
+            fi
+
+            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+
+            # Uncomment after confirming commits work
+            # git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/gijoraju/Jenkins-Project.git HEAD:main
+            '''
+        }
     }
-sh '''
-    git config --global --add safe.directory /var/lib/jenkins/workspace/ultimate-demo
-    git config user.email "gijoraju@gmail.com"
-    git config user.name "Gijo Raju"
-    
-    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-    git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-    
-    # Only commit if there are changes staged
-    if ! git diff-index --quiet HEAD --; then
-        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-        # git push <your-remote> <branch> # If you plan to push the change
-    else
-        echo "No changes detected in deployment.yml. Skipping commit."
-    fi
-'''
 }
   }
 }
