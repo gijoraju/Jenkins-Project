@@ -55,20 +55,22 @@ stage('Update Deployment File') {
         GIT_REPO_NAME = "Jenkins-Project"
         GIT_USER_NAME = "gijoraju"
     }
-    steps {
-        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-            sh '''
-                git config --global --add safe.directory /var/lib/jenkins/workspace/ultimate-demo
-                git config user.email "gijoraju@gmail.com"
-                git config user.name "Gijo Raju"
-                BUILD_NUMBER=${BUILD_NUMBER}
-                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-            '''
-        }
-    }
+sh '''
+    git config --global --add safe.directory /var/lib/jenkins/workspace/ultimate-demo
+    git config user.email "gijoraju@gmail.com"
+    git config user.name "Gijo Raju"
+    
+    sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+    git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+    
+    # Only commit if there are changes staged
+    if ! git diff-index --quiet HEAD --; then
+        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+        # git push <your-remote> <branch> # If you plan to push the change
+    else
+        echo "No changes detected in deployment.yml. Skipping commit."
+    fi
+'''
 }
   }
 }
