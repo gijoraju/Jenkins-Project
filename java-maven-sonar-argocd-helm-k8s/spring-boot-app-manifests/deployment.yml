@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: rajugijo/ultimate-cicd:26
+        image: rajugijo/spring-app-pipeline:26
         ports:
         - containerPort: 8080
