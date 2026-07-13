@@ -58,7 +58,7 @@ stage('Update Deployment File') {
     steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
             sh '''
-                git config --global --add safe.directory /var/lib/jenkins/workspace/ultimate-demo
+                git config --global --add safe.directory /var/lib/jenkins/workspace/spring-app-pipeline
                 git config user.email "gijoraju@gmail.com"
                 git config user.name "Gijo Raju"
                 BUILD_NUMBER=${BUILD_NUMBER}
