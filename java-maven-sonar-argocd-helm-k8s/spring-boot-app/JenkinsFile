@@ -36,7 +36,7 @@ stage('Static Code Analysis') {
 }
 stage('Build and Push Docker Image') {
   environment {
-    DOCKER_IMAGE = "rajugijo/ultimate-cicd:${BUILD_NUMBER}"
+    DOCKER_IMAGE = "rajugijo/spring-app-pipeline:${BUILD_NUMBER}"
     REGISTRY_CREDENTIALS = credentials('docker-cred')
     DOCKER_API_VERSION = "1.44"
   }
