@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: rajugijo/spring-app-pipeline:245
+        image: rajugijo/spring-app-pipeline:246
         ports:
         - containerPort: 8080
