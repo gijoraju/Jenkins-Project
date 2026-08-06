@@ -8,7 +8,7 @@ agent {
   stages {
     stage('Checkout') {
       steps {
-        sh 'echo passed testing100'
+        sh 'testing the webhook'
        
       }
     }
