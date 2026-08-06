@@ -8,7 +8,7 @@ agent {
   stages {
     stage('Checkout') {
       steps {
-        sh 'echo passed 10000'
+        sh 'echo passed testing'
        
       }
     }
